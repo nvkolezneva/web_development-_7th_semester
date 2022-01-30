@@ -1,0 +1,16 @@
+#  db.yml
+
+version: '3.7' 
+
+services:
+  postgres12:
+    image:  busybox
+    container_name: postgres12_container
+    command: /bin/httpd  -f -v -p  1234
+
+    networks: 
+      - default
+
+networks:
+  default:
+    name:  postgres12_network

@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  # База данных
+  postgres:
+    image: postgres:10-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file: .env
+
+  # Бэкенд Django
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+    command: /start.sh
+    entrypoint: /entrypoint.sh
+    restart: on-failure
+    env_file: .env
+
+  # Веб-сервер
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./nginx/dev.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/favicon/:/var/www/favicon/:ro
+
+volumes:
+  db_data: {}
